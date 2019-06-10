@@ -11,6 +11,9 @@
 #import "TableView.h"
 
 @interface XuanTingViewController ()<JXCategoryViewDelegate>
+{
+    UIButton *topbtn;
+}
 @property (nonatomic, strong) JXCategoryTitleView *categoryView;
 @property (nonatomic, strong) NSArray <NSString *> *titles;
 @property (nonatomic, strong) UIView *naviBGView;//44或者20，悬停时的上部view
@@ -55,7 +58,19 @@
     self.naviBGView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 44);
     [self.view addSubview:self.naviBGView];
     
+    //点击直接滚动到最上面
+    topbtn = [[UIButton alloc] initWithFrame:CGRectMake([UIScreen mainScreen].bounds.size.width-150, [UIScreen mainScreen].bounds.size.height-150, 100, 100)];
+    topbtn.backgroundColor = [UIColor purpleColor];
+    topbtn.layer.cornerRadius = 50;
+    topbtn.hidden = YES;
+    topbtn.layer.masksToBounds = YES;
+    [topbtn addTarget:self action:@selector(top) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:topbtn];
     
+}
+- (void)top{
+    [self.pagerView.currentScrollingListView setContentOffset:CGPointMake(0, 0)];
+    [self.pagerView.mainTableView setContentOffset:CGPointMake(0, 0)];
 }
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -153,6 +168,12 @@
     CGFloat percent = scrollView.contentOffset.y/thresholdDistance;
     percent = MAX(0, MIN(1, percent));
     self.naviBGView.alpha = percent;
+    //当悬停时候，置顶按钮显示
+    if(scrollView.contentOffset.y>=200-44){
+        topbtn.hidden = NO;
+    }else{
+        topbtn.hidden = YES;
+    }
 }
 
 
